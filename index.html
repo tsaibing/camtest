@@ -17,6 +17,7 @@
         <main>
             <div class="video-wrapper">
                 <video id="webcam" autoplay playsinline muted width="400" height="300"></video>
+                <canvas id="overlay-canvas" width="400" height="300"></canvas>
                 <div class="overlay" id="loading-overlay">
                     <div class="spinner"></div>
                     <p>正在初始化 AI 引擎...</p>
@@ -56,10 +57,11 @@
         </main>
     </div>
 
-    <!-- 引入 TensorFlow.js 和 KNN 分类器 -->
+    <!-- 引入 TensorFlow.js, MobileNet, KNN, 以及 COCO-SSD 目标检测 -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
     
     <script src="script.js"></script>
 </body>
