@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M4 AI Vision - Teachable Machine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-container">
+        <header>
+            <h1>AI Vision Pro</h1>
+            <p class="subtitle">Powered by M4 Compute Engine & TF.js</p>
+        </header>
+
+        <main>
+            <div class="video-wrapper">
+                <video id="webcam" autoplay playsinline muted width="400" height="300"></video>
+                <div class="overlay" id="loading-overlay">
+                    <div class="spinner"></div>
+                    <p>正在初始化 AI 引擎...</p>
+                </div>
+            </div>
+
+            <div class="prediction-box">
+                <h2>当前识别结果</h2>
+                <div class="result" id="prediction-result">等待学习...</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidence-fill"></div>
+                </div>
+                <p class="confidence-text" id="confidence-text">置信度: 0%</p>
+            </div>
+
+            <div class="controls">
+                <div class="class-card">
+                    <h3>物体 A</h3>
+                    <p>例如：手机</p>
+                    <button class="btn btn-primary" id="btn-class-a">
+                        <span class="icon">📸</span> 学习物体 A (<span id="count-a">0</span>)
+                    </button>
+                </div>
+
+                <div class="class-card">
+                    <h3>物体 B</h3>
+                    <p>例如：水杯</p>
+                    <button class="btn btn-secondary" id="btn-class-b">
+                        <span class="icon">📸</span> 学习物体 B (<span id="count-b">0</span>)
+                    </button>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-danger" id="btn-reset">重置模型</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- 引入 TensorFlow.js 和 KNN 分类器 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
