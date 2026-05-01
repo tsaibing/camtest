@@ -30,14 +30,22 @@ let bboxPersistence = 0;
 
 // Performance optimization: skip frames for heavy tasks
 let frameCounter = 0;
-const DETECTION_INTERVAL = 4; // 每 4 帧运行一次目标检测 (COCO-SSD)
-const PREDICTION_INTERVAL = 2; // 每 2 帧运行一次分类预测 (KNN)
+const DETECTION_INTERVAL = 1; // M4 性能强劲，恢复每帧检测以保证白框和绿框的极致平滑
+const PREDICTION_INTERVAL = 1; // 恢复每帧预测以保证置信度实时响应
+
+// KPI Tracking
+let lastTime = performance.now();
+let fpsFrameCount = 0;
 
 async function setupWebcam() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user' }
+                video: { 
+                    facingMode: 'user',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
             });
             webcamElement.srcObject = stream;
             return new Promise((resolve) => {
@@ -61,10 +69,17 @@ async function init() {
         await tf.ready();
         
         console.log("Loading MobileNet...");
-        mobilenetModule = await mobilenet.load({version: 2, alpha: 1.0});
+        mobilenetModule = await mobilenet.load({
+            version: 2, 
+            alpha: 1.0,
+            modelUrl: 'models/mobilenet_v2/model.json'
+        });
 
         console.log("Loading COCO-SSD...");
-        objectDetector = await cocoSsd.load();
+        objectDetector = await cocoSsd.load({
+            base: 'lite_mobilenet_v2',
+            modelUrl: 'models/coco-ssd/model.json'
+        });
 
         console.log("Creating KNN Classifier...");
         classifier = knnClassifier.create();
@@ -74,6 +89,9 @@ async function init() {
 
         // 隐藏加载动画
         overlay.classList.add('hidden');
+        
+        // 显示后端名称
+        document.getElementById('kpi-backend').innerText = tf.getBackend();
         
         // 绑定点击事件用于选择物体
         canvasElement.addEventListener('mousedown', handleCanvasClick);
@@ -216,6 +234,8 @@ const addExample = async (classId) => {
     counts[classId]++;
     if(classId === CLASS_A) countAEl.innerText = counts[CLASS_A];
     if(classId === CLASS_B) countBEl.innerText = counts[CLASS_B];
+    
+    document.getElementById('kpi-samples').innerText = counts[CLASS_A] + counts[CLASS_B];
 
     img.dispose();
 };
@@ -251,7 +271,11 @@ const predictLoop = async () => {
             if (frameCounter % PREDICTION_INTERVAL === 0) {
                 const croppedImg = cropImageToBox(webcamElement, selectedPrediction.smoothedBbox);
                 const features = mobilenetModule.infer(croppedImg, true);
+                
+                const t0 = performance.now();
                 const res = await classifier.predictClass(features, 3);
+                const t1 = performance.now();
+                document.getElementById('kpi-time').innerText = (t1 - t0).toFixed(1) + ' ms';
                 
                 resultEl.innerText = res.label;
                 const confidence = (res.confidences[res.label] * 100).toFixed(1);
@@ -296,6 +320,15 @@ const predictLoop = async () => {
         confidenceText.innerText = `置信度: 0%`;
     }
 
+    // 计算并更新 FPS
+    fpsFrameCount++;
+    const now = performance.now();
+    if (now - lastTime >= 1000) {
+        document.getElementById('kpi-fps').innerText = fpsFrameCount;
+        fpsFrameCount = 0;
+        lastTime = now;
+    }
+
     requestAnimationFrame(predictLoop);
 };
 
@@ -307,6 +340,7 @@ btnReset.addEventListener('click', () => {
     counts = { [CLASS_A]: 0, [CLASS_B]: 0 };
     countAEl.innerText = 0;
     countBEl.innerText = 0;
+    document.getElementById('kpi-samples').innerText = 0;
 });
 
 window.onload = init;

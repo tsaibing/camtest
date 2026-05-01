@@ -14,54 +14,65 @@
             <p class="subtitle">Powered by M4 Compute Engine & TF.js</p>
         </header>
 
-        <main>
-            <div class="video-wrapper">
-                <video id="webcam" autoplay playsinline muted width="400" height="300"></video>
-                <canvas id="overlay-canvas" width="400" height="300"></canvas>
-                <div class="overlay" id="loading-overlay">
-                    <div class="spinner"></div>
-                    <p>正在初始化 AI 引擎...</p>
+        <main class="layout-grid">
+            <div class="left-col">
+                <div class="video-wrapper">
+                    <video id="webcam" autoplay playsinline muted></video>
+                    <canvas id="overlay-canvas"></canvas>
+                    <div class="overlay" id="loading-overlay">
+                        <div class="spinner"></div>
+                        <p>正在初始化 AI 引擎...</p>
+                    </div>
+                </div>
+
+                <div class="kpi-dashboard">
+                    <div class="kpi-item"><span class="kpi-value" id="kpi-fps">0</span><span class="kpi-label">FPS</span></div>
+                    <div class="kpi-item"><span class="kpi-value" id="kpi-time">0 ms</span><span class="kpi-label">推理耗时</span></div>
+                    <div class="kpi-item"><span class="kpi-value" id="kpi-samples">0</span><span class="kpi-label">总样本</span></div>
+                    <div class="kpi-item"><span class="kpi-value" id="kpi-backend">-</span><span class="kpi-label">计算后端</span></div>
                 </div>
             </div>
 
-            <div class="prediction-box">
-                <h2>当前识别结果</h2>
-                <div class="result" id="prediction-result">等待学习...</div>
-                <div class="confidence-bar">
-                    <div class="confidence-fill" id="confidence-fill"></div>
-                </div>
-                <p class="confidence-text" id="confidence-text">置信度: 0%</p>
-            </div>
-
-            <div class="controls">
-                <div class="class-card">
-                    <h3>物体 A</h3>
-                    <p>例如：手机</p>
-                    <button class="btn btn-primary" id="btn-class-a">
-                        <span class="icon">📸</span> 学习物体 A (<span id="count-a">0</span>)
-                    </button>
+            <div class="right-col">
+                <div class="prediction-box">
+                    <h2>当前识别结果</h2>
+                    <div class="result" id="prediction-result">等待学习...</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidence-fill"></div>
+                    </div>
+                    <p class="confidence-text" id="confidence-text">置信度: 0%</p>
                 </div>
 
-                <div class="class-card">
-                    <h3>物体 B</h3>
-                    <p>例如：水杯</p>
-                    <button class="btn btn-secondary" id="btn-class-b">
-                        <span class="icon">📸</span> 学习物体 B (<span id="count-b">0</span>)
-                    </button>
+                <div class="controls">
+                    <div class="class-card">
+                        <h3>物体 A</h3>
+                        <p>例如：手机</p>
+                        <button class="btn btn-primary" id="btn-class-a">
+                            <span class="icon">📸</span> 学习物体 A (<span id="count-a">0</span>)
+                        </button>
+                    </div>
+
+                    <div class="class-card">
+                        <h3>物体 B</h3>
+                        <p>例如：水杯</p>
+                        <button class="btn btn-secondary" id="btn-class-b">
+                            <span class="icon">📸</span> 学习物体 B (<span id="count-b">0</span>)
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="actions">
-                <button class="btn btn-danger" id="btn-reset">重置模型</button>
+                
+                <div class="actions">
+                    <button class="btn btn-danger" id="btn-reset">重置模型</button>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- 引入 TensorFlow.js, MobileNet, KNN, 以及 COCO-SSD 目标检测 -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <!-- 引入 TensorFlow.js, MobileNet, KNN, 以及 COCO-SSD 目标检测 (本地离线版) -->
+    <script src="libs/tf.min.js"></script>
+    <script src="libs/mobilenet.min.js"></script>
+    <script src="libs/knn-classifier.min.js"></script>
+    <script src="libs/coco-ssd.min.js"></script>
     
     <script src="script.js"></script>
 </body>
